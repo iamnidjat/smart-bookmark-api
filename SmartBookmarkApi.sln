@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35222.181
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartBookmarkApi", "SmartBookmarkApi.csproj", "{E3F5AFD5-E408-410D-9DA7-F9356B457964}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E3F5AFD5-E408-410D-9DA7-F9356B457964}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3F5AFD5-E408-410D-9DA7-F9356B457964}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3F5AFD5-E408-410D-9DA7-F9356B457964}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3F5AFD5-E408-410D-9DA7-F9356B457964}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D49A01CC-6B12-47C0-AE05-9180A10761F8}
+	EndGlobalSection
+EndGlobal
