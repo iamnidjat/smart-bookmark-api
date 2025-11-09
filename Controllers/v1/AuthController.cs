@@ -3,9 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace SmartBookmarkApi.Controllers.v1
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
+        public AuthController() { }
     }
 }

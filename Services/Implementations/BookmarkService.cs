@@ -1,6 +1,8 @@
-﻿namespace SmartBookmarkApi.Services.Implementations
+﻿using SmartBookmarkApi.Services.Interfaces;
+
+namespace SmartBookmarkApi.Services.Implementations
 {
-    public class BookmarkService
+    public class BookmarkService : IBookmarkService
     {
     }
 }

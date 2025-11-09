@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SmartBookmarkApi.Models;
 
 namespace SmartBookmarkApi.Data
 {
@@ -8,5 +9,7 @@ namespace SmartBookmarkApi.Data
         {
             Database.EnsureCreated();
         }
+
+        public DbSet<Bookmark> Bookmarks { get; set; }
     }
 }

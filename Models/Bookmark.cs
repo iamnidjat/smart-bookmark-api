@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using SmartBookmarkApi.Models.Base;
+using System.ComponentModel.DataAnnotations;
 
 namespace SmartBookmarkApi.Models
 {
-    public class Bookmark
+    public class Bookmark : IEntity
     {
         [Key]
         public int Id { get; set; }

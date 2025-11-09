@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SmartBookmarkApi.Data;
+using SmartBookmarkApi.Repositories;
 using SmartBookmarkApi.Services.Implementations;
 using SmartBookmarkApi.Services.Interfaces;
 using System.Text.Json.Serialization;
@@ -24,8 +25,15 @@ builder.Services.AddDbContext<AppDbContext>(options => {
     options.UseSqlServer(connectionString);
 });
 
+// Specific Services
 builder.Services.AddScoped<IBookmarkService, BookmarkService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+
+// Generic Services
+builder.Services.AddScoped(typeof(ICRUDBaseService<>), typeof(CRUDBaseService<>));
+
+// Repositories
+builder.Services.AddScoped<IBookmarkRepository, BookmarkRepository>();
 
 var app = builder.Build();
 
