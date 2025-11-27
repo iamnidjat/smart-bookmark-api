@@ -1,8 +1,11 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using SmartBookmarkApi.Data;
 using SmartBookmarkApi.Repositories;
 using SmartBookmarkApi.Services.Implementations;
 using SmartBookmarkApi.Services.Interfaces;
+using System.Text;
 using System.Text.Json.Serialization;
 
 
@@ -28,12 +31,37 @@ builder.Services.AddDbContext<AppDbContext>(options => {
 // Specific Services
 builder.Services.AddScoped<IBookmarkService, BookmarkService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 
 // Generic Services
 builder.Services.AddScoped(typeof(ICRUDBaseService<>), typeof(CRUDBaseService<>));
 
 // Repositories
 builder.Services.AddScoped<IBookmarkRepository, BookmarkRepository>();
+
+var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]))
+    };
+});
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -44,15 +72,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseHttpsRedirection();
+
 app.UseCors(options =>
 {
     options.AllowAnyOrigin()
     .AllowAnyMethod()
     .AllowAnyHeader();
 });
-
-
-app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

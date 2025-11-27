@@ -24,5 +24,9 @@ namespace SmartBookmarkApi.Models
         public ICollection<string> Categories = []; // new List<string>();
 
         public ICollection<string> Tags = [];
+
+        public int UserId { get; set; }
+
+        public User? User { get; set; }
     }
 }

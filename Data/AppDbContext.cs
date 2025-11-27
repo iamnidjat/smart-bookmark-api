@@ -11,5 +11,8 @@ namespace SmartBookmarkApi.Data
         }
 
         public DbSet<Bookmark> Bookmarks { get; set; }
+        public DbSet<User> Users { get; set; }
+
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
     }
 }
