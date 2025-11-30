@@ -2,7 +2,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SmartBookmarkApi.Data;
-using SmartBookmarkApi.Repositories;
+using SmartBookmarkApi.Repositories.Implementations;
+using SmartBookmarkApi.Repositories.Interfaces;
 using SmartBookmarkApi.Services.Implementations;
 using SmartBookmarkApi.Services.Interfaces;
 using System.Text;
@@ -33,8 +34,8 @@ builder.Services.AddScoped<IBookmarkService, BookmarkService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 
-// Generic Services
-builder.Services.AddScoped(typeof(ICRUDBaseService<>), typeof(CRUDBaseService<>));
+// Generic Repository
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
 // Repositories
 builder.Services.AddScoped<IBookmarkRepository, BookmarkRepository>();

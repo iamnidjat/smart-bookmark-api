@@ -7,7 +7,7 @@ using SmartBookmarkApi.ViewModels;
 
 namespace SmartBookmarkApi.Controllers.v1
 {
-    [Route("api/v1/[controller]")]
+    [Route("api/v1/[controller]/")]
     [ApiController]
     public class AuthController : ControllerBase
     {
@@ -18,35 +18,42 @@ namespace SmartBookmarkApi.Controllers.v1
         }
 
         [HttpGet("random-username")]
-        public string GetRandomUsername()
+        public IActionResult GetRandomUsername()
         {
-            return _authService.GetRandomUsername();
+            var username = _authService.GetRandomUsername();
+            return Ok(new { username });
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> StudentLoginAsync([FromBody] LoginModel model)
+        public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var authResponse = await _authService.LoginAsync(model.Username, model.Password, HttpContext);
 
             if (authResponse is null)
             {
-                return StatusCode(500, new { message = "Invalid username or password." });
+                return Unauthorized(new { message = "Invalid username or password." });
             }
 
-            return StatusCode(201, authResponse);
+            return Ok(authResponse);
         }
 
         [HttpPost("signup")]
-        public async Task<IActionResult> StudentSignupAsync([FromBody] RegisterModel model)
+        public async Task<IActionResult> Signup([FromBody] RegisterModel model)
         {
+            if (!ModelState.IsValid) // prevents invalid or incomplete data from reaching your service layer and DB
+                return BadRequest(ModelState);
+
             var authResponse = await _authService.SignupAsync(model.Username, model.Password, model.ConfirmPassword, model.Email, HttpContext);
 
             if (authResponse is null)
             {
-                return StatusCode(500, new { message = "Signup failed." });
+                return BadRequest(new { message = "Signup failed." });
             }
 
-            return StatusCode(201, authResponse);
+            return Created("", authResponse);
         }
 
         [HttpPost("refresh")]
@@ -58,11 +65,11 @@ namespace SmartBookmarkApi.Controllers.v1
 
                 return Ok(newAccessToken);
             }
-            catch (SecurityTokenException ex)
+            catch (SecurityTokenException)
             {
                 return Unauthorized(new { message = "Invalid refresh token" });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, new { message = "Server error" });
             }

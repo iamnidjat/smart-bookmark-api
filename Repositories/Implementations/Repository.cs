@@ -1,18 +1,22 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SmartBookmarkApi.Data;
 using SmartBookmarkApi.Models.Base;
-using SmartBookmarkApi.Services.Interfaces;
+using SmartBookmarkApi.Repositories.Interfaces;
 using SmartBookmarkApi.Utilities;
 
-namespace SmartBookmarkApi.Services.Implementations
+namespace SmartBookmarkApi.Repositories.Implementations
 {
-    public class CRUDBaseService<T> : ICRUDBaseService<T> where T : class, IEntity
+    // The generic Repository class provides basic CRUD operations for any entity.
+    // It isolates all Entity Framework Core database logic, so the service layer
+    // doesn’t need to know how the data is actually stored or retrieved.
+    // This makes the application easier to maintain, test, and extend.
+    public class Repository<T> : IRepository<T> where T : class, IEntity
     {
         protected readonly AppDbContext _context;
         protected readonly ILogger _logger;
         protected readonly DbSet<T> _dbSet;
 
-        public CRUDBaseService(AppDbContext context, ILogger logger)
+        public Repository(AppDbContext context, ILogger logger)
         {
             _context = context;
             _logger = logger;
