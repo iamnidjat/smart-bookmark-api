@@ -21,12 +21,19 @@ namespace SmartBookmarkApi.Models
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public ICollection<string> Categories = []; // new List<string>();
+        public ICollection<string> Tags { get; set; } = []; // new List<string>();
 
-        public ICollection<string> Tags = [];
+        [Required]
+        public int VisitCount { get; set; } // all-time
 
+        [Required]
         public int UserId { get; set; }
 
         public User? User { get; set; }
+
+        [Required]
+        public int CategoryId { get; set; }
+
+        public Category? Category { get; set; }
     }
 }

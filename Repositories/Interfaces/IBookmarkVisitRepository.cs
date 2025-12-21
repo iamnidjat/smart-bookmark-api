@@ -1,0 +1,12 @@
+﻿using SmartBookmarkApi.DTOs;
+using SmartBookmarkApi.Models;
+using SmartBookmarkApi.Utilities;
+
+namespace SmartBookmarkApi.Repositories.Interfaces
+{
+    public interface IBookmarkVisitRepository
+    {
+        Task RegisterVisitAsync(int bookmarkId);
+        Task<List<BookmarkVisitCountDto>> GetMostVisitedAsync(DateTime from, int take);
+    }
+}

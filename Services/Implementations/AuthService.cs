@@ -7,6 +7,7 @@ using SmartBookmarkApi.Data;
 using SmartBookmarkApi.DTOs;
 using SmartBookmarkApi.Models;
 using SmartBookmarkApi.Services.Interfaces;
+using SmartBookmarkApi.Utilities;
 using System.Net.Http;
 using BC = BCrypt.Net.BCrypt;
 
@@ -256,6 +257,34 @@ namespace SmartBookmarkApi.Services.Implementations
             {
                 _logger.LogError(ex, "Unexpected error occurred while refreshing the access token");
                 throw;
+            }
+        }
+
+        public async Task<OperationResult> LogoutAsync(int userId)
+        {
+            try
+            {
+                var tokens = await _context.RefreshTokens.Where(t => t.UserId == userId).ToListAsync();
+
+
+                if (!tokens.Any())
+                    return new OperationResult { Success = true };
+
+                _context.RefreshTokens.RemoveRange(tokens);
+                await _context.SaveChangesAsync();
+
+                return new OperationResult { Success = true };
+
+            }
+            catch (Exception ex) when (ex is DbUpdateConcurrencyException or DbUpdateException or OperationCanceledException or ArgumentNullException)
+            {
+                _logger.LogError(ex, "Failed to logout user {UserId}", userId);
+                return new OperationResult { Success = false, ErrorMessage = ex.Message };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error occurred while logging out user {UserId}", userId);
+                return new OperationResult { Success = false, ErrorMessage = ex.Message };
             }
         }
     }

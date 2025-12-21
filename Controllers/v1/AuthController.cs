@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using SmartBookmarkApi.DTOs;
 using SmartBookmarkApi.Services.Interfaces;
+using SmartBookmarkApi.Utilities;
 using SmartBookmarkApi.ViewModels;
 
 namespace SmartBookmarkApi.Controllers.v1
@@ -73,6 +74,19 @@ namespace SmartBookmarkApi.Controllers.v1
             {
                 return StatusCode(500, new { message = "Server error" });
             }
+        }
+
+        [HttpPost("logout")]
+        public async Task<IActionResult> LogoutAsync(int userId)
+        {
+            var logoutResponse = await _authService.LogoutAsync(userId);
+
+            if (logoutResponse is null)
+            {
+                return BadRequest(new { message = "Logout failed." });
+            }
+
+            return Ok();
         }
     }
 }

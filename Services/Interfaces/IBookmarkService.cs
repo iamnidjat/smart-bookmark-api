@@ -10,5 +10,8 @@ namespace SmartBookmarkApi.Services.Interfaces
         Task<OperationResult> AddAsync(Bookmark bookmark);
         Task<OperationResult> UpdateAsync(int id, Bookmark bookmark);
         Task<OperationResult> RemoveAsync(int id);
+        Task<OperationResultOfT<List<Bookmark>>> FilterBookmarks(string filterWord);
+        Task<OperationResult> RegisterVisitAsync(int bookmarkId);
+        Task<OperationResult> ChangeBookmarkCategory(int bookmarkId, int newCategoryId);
     }
 }

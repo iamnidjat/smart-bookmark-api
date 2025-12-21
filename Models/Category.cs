@@ -3,19 +3,19 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SmartBookmarkApi.Models
 {
-    public class RefreshToken : IEntity
+    public class Category : IEntity
     {
         [Key]
         public int Id { get; set; }
 
         [Required]
-        public string Token { get; set; } = string.Empty;
+        public string Name { get; set; } = "";
+
+        public string? Description { get; set; }
 
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime ExpiresAt { get; set; }
-        public bool IsUsed { get; set; } = false;
 
-        public int UserId { get; set; }
+        public ICollection<Bookmark> Bookmarks = [];
     }
 }

@@ -31,6 +31,8 @@ builder.Services.AddDbContext<AppDbContext>(options => {
 
 // Specific Services
 builder.Services.AddScoped<IBookmarkService, BookmarkService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IStatisticsService, StatisticsService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 
@@ -39,6 +41,8 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
 // Repositories
 builder.Services.AddScoped<IBookmarkRepository, BookmarkRepository>();
+builder.Services.AddScoped<IBookmarkVisitRepository, BookmarkVisitRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 
@@ -65,6 +69,16 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    context.Database.Migrate(); // ensures DB exists & applies pending migrations
+
+    // Seed data
+    await DbInitializer.Initialize(context);
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
