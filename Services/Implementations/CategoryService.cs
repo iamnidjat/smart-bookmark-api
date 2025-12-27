@@ -24,36 +24,36 @@ namespace SmartBookmarkApi.Services.Implementations
             _logger = logger;
         }
 
-        public async Task<OperationResult> AddAsync(Category category)
+        public async Task<OperationResultOfT<Category>> AddAsync(Category category, CancellationToken cancellationToken)
         {
-            return await _categoryRepository.AddAsync(category);
+            return await _categoryRepository.AddAsync(category, cancellationToken);
         }
 
-        public async Task<List<Category>> GetAllAsync()
+        public async Task<List<Category>> GetAllAsync(CancellationToken cancellationToken)
         {
-            return await _categoryRepository.GetAllAsync();
+            return await _categoryRepository.GetAllAsync(cancellationToken);
         }
 
-        public async Task<Category?> GetByIdAsync(int id)
+        public async Task<Category?> GetByIdAsync(int id, CancellationToken cancellationToken)
         {
-            return await _categoryRepository.GetByIdAsync(id);
+            return await _categoryRepository.GetByIdAsync(id, cancellationToken);
         }
 
-        public async Task<OperationResult> RemoveAsync(int id)
+        public async Task<OperationResult> RemoveAsync(int id, CancellationToken cancellationToken)
         {
-            return await _categoryRepository.RemoveAsync(id);
+            return await _categoryRepository.RemoveAsync(id, cancellationToken);
         }
 
-        public async Task<OperationResult> UpdateAsync(int id, Category category)
+        public async Task<OperationResult> UpdateAsync(int id, Category category, CancellationToken cancellationToken)
         {
-            return await _categoryRepository.UpdateAsync(id, category);
+            return await _categoryRepository.UpdateAsync(id, category, cancellationToken);
         }
 
-        public async Task<OperationResultOfT<List<Category>>> FilterCategories(string filterWord)
+        public async Task<OperationResultOfT<List<Category>>> FilterCategories(string filterWord, CancellationToken cancellationToken)
         {
             try
             {
-                var filteredCategories = await _categoryRepository.FilterAsync(filterWord);
+                var filteredCategories = await _categoryRepository.FilterAsync(filterWord, cancellationToken);
 
                 return new OperationResultOfT<List<Category>>
                 {
@@ -61,7 +61,7 @@ namespace SmartBookmarkApi.Services.Implementations
                     Data = filteredCategories
                 };
             }
-            catch (Exception ex) when (ex is OperationCanceledException or ArgumentNullException)
+            catch (Exception ex) when (ex is ArgumentNullException)
             {
                 _logger.LogError(ex, "Failed to filter bookmarks");
                 return new OperationResultOfT<List<Category>> { Success = false, ErrorMessage = ex.Message };

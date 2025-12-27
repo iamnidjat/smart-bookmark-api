@@ -23,11 +23,11 @@ namespace SmartBookmarkApi.Services.Implementations
             _bookmarkVisitRepository = bookmarkVisitRepository;
         }
 
-        public async Task<OperationResultOfT<List<BookmarkVisitCountDto>>> GetMostVisitedAsync(DateTime from, int take)
+        public async Task<OperationResultOfT<List<BookmarkVisitCountDto>>> GetMostVisitedAsync(DateTime from, int take, CancellationToken cancellationToken)
         {
             try
             {
-                var mostVisited = await _bookmarkVisitRepository.GetMostVisitedAsync(from, take);
+                var mostVisited = await _bookmarkVisitRepository.GetMostVisitedAsync(from, take, cancellationToken);
 
                 return new OperationResultOfT<List<BookmarkVisitCountDto>>
                 {
@@ -35,7 +35,7 @@ namespace SmartBookmarkApi.Services.Implementations
                     Data = mostVisited
                 };
             }
-            catch (Exception ex) when (ex is OperationCanceledException or ArgumentNullException)
+            catch (Exception ex) when (ex is ArgumentNullException)
             {
                 _logger.LogError(ex, "Failed to get most visited bookmarks");
                 return new OperationResultOfT<List<BookmarkVisitCountDto>> { Success = false, ErrorMessage = ex.Message };
@@ -45,11 +45,6 @@ namespace SmartBookmarkApi.Services.Implementations
                 _logger.LogError(ex, "Unexpected error occurred while getting most visited bookmarks.");
                 return new OperationResultOfT<List<BookmarkVisitCountDto>> { Success = false, ErrorMessage = ex.Message };
             }
-        }
-
-        Task<List<BookmarkVisitCountDto>> IStatisticsService.GetMostVisitedAsync(DateTime from, int take)
-        {
-            throw new NotImplementedException();
         }
     }
 }

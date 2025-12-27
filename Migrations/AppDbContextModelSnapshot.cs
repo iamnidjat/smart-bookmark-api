@@ -22,6 +22,21 @@ namespace SmartBookmarkApi.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("BookmarkTag", b =>
+                {
+                    b.Property<int>("BookmarksId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TagsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("BookmarksId", "TagsId");
+
+                    b.HasIndex("TagsId");
+
+                    b.ToTable("BookmarkTag");
+                });
+
             modelBuilder.Entity("SmartBookmarkApi.Models.Bookmark", b =>
                 {
                     b.Property<int>("Id")
@@ -40,10 +55,6 @@ namespace SmartBookmarkApi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.PrimitiveCollection<string>("Tags")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
@@ -142,6 +153,23 @@ namespace SmartBookmarkApi.Migrations
                     b.ToTable("RefreshTokens");
                 });
 
+            modelBuilder.Entity("SmartBookmarkApi.Models.Tag", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tags");
+                });
+
             modelBuilder.Entity("SmartBookmarkApi.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -165,6 +193,21 @@ namespace SmartBookmarkApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("BookmarkTag", b =>
+                {
+                    b.HasOne("SmartBookmarkApi.Models.Bookmark", null)
+                        .WithMany()
+                        .HasForeignKey("BookmarksId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SmartBookmarkApi.Models.Tag", null)
+                        .WithMany()
+                        .HasForeignKey("TagsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("SmartBookmarkApi.Models.Bookmark", b =>

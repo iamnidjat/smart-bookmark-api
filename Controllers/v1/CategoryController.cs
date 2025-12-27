@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SmartBookmarkApi.Models;
 using SmartBookmarkApi.Services.Implementations;
@@ -8,6 +9,7 @@ namespace SmartBookmarkApi.Controllers.v1
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
@@ -17,16 +19,20 @@ namespace SmartBookmarkApi.Controllers.v1
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
-            var bookmarks = await _categoryService.GetAllAsync();
+            var bookmarks = await _categoryService.GetAllAsync(cancellationToken);
+
+            if (bookmarks == null)
+                return NotFound();
+
             return Ok(bookmarks);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> Get(int id, CancellationToken cancellationToken)
         {
-            var bookmark = await _categoryService.GetByIdAsync(id);
+            var bookmark = await _categoryService.GetByIdAsync(id, cancellationToken);
 
             if (bookmark == null)
                 return NotFound();
@@ -35,20 +41,20 @@ namespace SmartBookmarkApi.Controllers.v1
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Category category)
+        public async Task<IActionResult> Create([FromBody] Category category, CancellationToken cancellationToken)
         {
-            var result = await _categoryService.AddAsync(category);
+            var result = await _categoryService.AddAsync(category, cancellationToken);
 
             if (!result.Success)
                 return BadRequest(result.ErrorMessage);
 
-            return Ok();
+            return Created("", result.Data);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] Category category)
+        public async Task<IActionResult> Update(int id, [FromBody] Category category, CancellationToken cancellationToken)
         {
-            var result = await _categoryService.UpdateAsync(id, category);
+            var result = await _categoryService.UpdateAsync(id, category, cancellationToken);
 
             if (!result.Success)
                 return BadRequest(result.ErrorMessage);
@@ -57,9 +63,9 @@ namespace SmartBookmarkApi.Controllers.v1
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Remove(int id)
+        public async Task<IActionResult> Remove(int id, CancellationToken cancellationToken)
         {
-            var result = await _categoryService.RemoveAsync(id);
+            var result = await _categoryService.RemoveAsync(id, cancellationToken);
 
             if (!result.Success)
                 return BadRequest(result.ErrorMessage);
@@ -68,12 +74,12 @@ namespace SmartBookmarkApi.Controllers.v1
         }
 
         [HttpGet("filter")]
-        public async Task<IActionResult> Filter([FromQuery] string filterWord)
+        public async Task<IActionResult> Filter([FromQuery] string filterWord, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(filterWord))
                 return BadRequest("Filter word is required.");
 
-            var result = await _categoryService.FilterCategories(filterWord);
+            var result = await _categoryService.FilterCategories(filterWord, cancellationToken);
 
             if (!result.Success)
                 return BadRequest(result.ErrorMessage);

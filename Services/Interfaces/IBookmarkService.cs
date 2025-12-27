@@ -5,13 +5,13 @@ namespace SmartBookmarkApi.Services.Interfaces
 {
     public interface IBookmarkService
     {
-        Task<List<Bookmark>> GetAllAsync();
-        Task<Bookmark?> GetByIdAsync(int id);
-        Task<OperationResult> AddAsync(Bookmark bookmark);
-        Task<OperationResult> UpdateAsync(int id, Bookmark bookmark);
-        Task<OperationResult> RemoveAsync(int id);
-        Task<OperationResultOfT<List<Bookmark>>> FilterBookmarks(string filterWord);
-        Task<OperationResult> RegisterVisitAsync(int bookmarkId);
-        Task<OperationResult> ChangeBookmarkCategory(int bookmarkId, int newCategoryId);
+        Task<List<Bookmark>> GetAllAsync(CancellationToken cancellationToken);
+        Task<Bookmark?> GetByIdAsync(int id, CancellationToken cancellationToken);
+        Task<OperationResultOfT<Bookmark>> AddAsync(Bookmark bookmark, CancellationToken cancellationToken);
+        Task<OperationResult> UpdateAsync(int id, Bookmark bookmark, CancellationToken cancellationToken);
+        Task<OperationResult> RemoveAsync(int id, CancellationToken cancellationToken);
+        Task<OperationResultOfT<List<Bookmark>>> FilterBookmarks(string filterWord, CancellationToken cancellationToken);
+        Task<OperationResult> RegisterVisitAsync(int bookmarkId, CancellationToken cancellationToken);
+        Task<OperationResult> ChangeBookmarkCategory(int bookmarkId, int newCategoryId, CancellationToken cancellationToken);
     }
 }

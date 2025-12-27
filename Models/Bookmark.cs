@@ -21,10 +21,11 @@ namespace SmartBookmarkApi.Models
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public ICollection<string> Tags { get; set; } = []; // new List<string>();
-
         [Required]
         public int VisitCount { get; set; } // all-time
+        
+        // EF Core will create third table for many-to-many relationhsip automatically
+        public ICollection<Tag> Tags { get; set; } = [];    // new List<Tag>();
 
         [Required]
         public int UserId { get; set; }

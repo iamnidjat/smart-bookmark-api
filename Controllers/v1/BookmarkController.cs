@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SmartBookmarkApi.Models;
 using SmartBookmarkApi.Services.Interfaces;
@@ -7,7 +8,8 @@ using SmartBookmarkApi.Utilities;
 namespace SmartBookmarkApi.Controllers.v1
 {
     [Route("api/v1/[controller]/")]
-    [ApiController]
+    [ApiController] 
+    [Authorize] // Allows only authenticated users with a valid JWT token to access these endpoints
     public class BookmarkController : ControllerBase
     {
         private readonly IBookmarkService _bookmarkService;
@@ -17,16 +19,16 @@ namespace SmartBookmarkApi.Controllers.v1
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
-            var bookmarks = await _bookmarkService.GetAllAsync();
+            var bookmarks = await _bookmarkService.GetAllAsync(cancellationToken);
             return Ok(bookmarks);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> Get(int id, CancellationToken cancellationToken)
         {
-            var bookmark = await _bookmarkService.GetByIdAsync(id);
+            var bookmark = await _bookmarkService.GetByIdAsync(id, cancellationToken);
 
             if (bookmark == null)
                 return NotFound();
@@ -35,20 +37,20 @@ namespace SmartBookmarkApi.Controllers.v1
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Bookmark bookmark)
+        public async Task<IActionResult> Create([FromBody] Bookmark bookmark, CancellationToken cancellationToken)
         {
-            var result = await _bookmarkService.AddAsync(bookmark);
+            var result = await _bookmarkService.AddAsync(bookmark, cancellationToken);
 
             if (!result.Success)
                 return BadRequest(result.ErrorMessage);
 
-            return Ok();
+            return Created("", result.Data);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] Bookmark bookmark)
+        public async Task<IActionResult> Update(int id, [FromBody] Bookmark bookmark, CancellationToken cancellationToken)
         {
-            var result = await _bookmarkService.UpdateAsync(id, bookmark);
+            var result = await _bookmarkService.UpdateAsync(id, bookmark, cancellationToken);
 
             if (!result.Success)
                 return BadRequest(result.ErrorMessage);
@@ -57,9 +59,9 @@ namespace SmartBookmarkApi.Controllers.v1
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Remove(int id)
+        public async Task<IActionResult> Remove(int id, CancellationToken cancellationToken)
         {
-            var result = await _bookmarkService.RemoveAsync(id);
+            var result = await _bookmarkService.RemoveAsync(id, cancellationToken);
 
             if (!result.Success)
                 return BadRequest(result.ErrorMessage);
@@ -68,12 +70,12 @@ namespace SmartBookmarkApi.Controllers.v1
         }
 
         [HttpGet("filter")]
-        public async Task<IActionResult> Filter([FromQuery] string filterWord)
+        public async Task<IActionResult> Filter([FromQuery] string filterWord, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(filterWord))
                 return BadRequest("Filter word is required.");
 
-            var result = await _bookmarkService.FilterBookmarks(filterWord);
+            var result = await _bookmarkService.FilterBookmarks(filterWord, cancellationToken);
 
             if (!result.Success)
                 return BadRequest(result.ErrorMessage);
@@ -82,9 +84,9 @@ namespace SmartBookmarkApi.Controllers.v1
         }
 
         [HttpPost("{bookmarkId}/visit")] // route parameter
-        public async Task<IActionResult> RegisterVisit(int bookmarkId)
+        public async Task<IActionResult> RegisterVisit(int bookmarkId, CancellationToken cancellationToken)
         {
-            var result = await _bookmarkService.RegisterVisitAsync(bookmarkId);
+            var result = await _bookmarkService.RegisterVisitAsync(bookmarkId, cancellationToken);
 
             if (!result.Success)
                 return BadRequest(result.ErrorMessage);
@@ -93,9 +95,9 @@ namespace SmartBookmarkApi.Controllers.v1
         }
 
         [HttpPatch("{bookmarkId}/change-category")]
-        public async Task<IActionResult> ChangeBookmarkCategory([FromRoute] int bookmarkId, [FromQuery] int newCategoryId)
+        public async Task<IActionResult> ChangeBookmarkCategory([FromRoute] int bookmarkId, [FromQuery] int newCategoryId, CancellationToken cancellationToken)
         {
-            var result = await _bookmarkService.ChangeBookmarkCategory(bookmarkId, newCategoryId);
+            var result = await _bookmarkService.ChangeBookmarkCategory(bookmarkId, newCategoryId, cancellationToken);
 
             if (!result.Success)
                 return BadRequest(result.ErrorMessage);

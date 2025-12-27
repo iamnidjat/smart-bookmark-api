@@ -13,6 +13,8 @@ namespace SmartBookmarkApi.Data
         public DbSet<Bookmark> Bookmarks { get; set; }
         public DbSet<Category> Categories { get; set; }
 
+        public DbSet<Tag> Tags { get; set; }
+
         public DbSet<BookmarkVisit> BookmarkVisits { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }

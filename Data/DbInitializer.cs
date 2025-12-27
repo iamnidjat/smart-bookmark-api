@@ -33,6 +33,28 @@ namespace SmartBookmarkApi.Data
                 await context.SaveChangesAsync();
             }
 
+            if (!await context.Tags.AnyAsync())
+            {
+                var tags = new List<Tag>
+                {
+                    new Tag
+                    {
+                        Name = "aspnet"
+                    },
+                    new Tag
+                    {
+                        Name = "docs"
+                    },
+                    new Tag
+                    {
+                        Name = "news"
+                    }
+                };
+
+                context.Tags.AddRange(tags);
+                await context.SaveChangesAsync();
+            }
+
             // Seed Bookmarks
             if (!await context.Bookmarks.AnyAsync())
             {
@@ -40,6 +62,9 @@ namespace SmartBookmarkApi.Data
                 var bob = await context.Users.FirstAsync(u => u.Username == "bob");
                 var tech = await context.Categories.FirstAsync(c => c.Name == "Tech");
                 var news = await context.Categories.FirstAsync(c => c.Name == "News");
+                var aspnetTag = await context.Tags.FirstAsync(t => t.Name == "aspnet");
+                var docsTag = await context.Tags.FirstAsync(t => t.Name == "docs");
+                var newsTag = await context.Tags.FirstAsync(t => t.Name == "news");
 
                 var bookmarks = new List<Bookmark>
                 {
@@ -48,7 +73,7 @@ namespace SmartBookmarkApi.Data
                         Title = "ASP.NET Core Docs",
                         Url = "https://docs.microsoft.com/aspnet/core",
                         Description = "Official ASP.NET Core documentation",
-                        Tags = new List<string>(), // empty
+                        Tags = new List<Tag> { aspnetTag, docsTag },
                         UserId = alice.Id,
                         CategoryId = tech.Id,
                         VisitCount = 10
@@ -58,7 +83,7 @@ namespace SmartBookmarkApi.Data
                         Title = "BBC News",
                         Url = "https://www.bbc.com/news",
                         Description = "Latest world news",
-                        Tags = new List<string>(), // empty
+                        Tags = new List<Tag> { newsTag },
                         UserId = bob.Id,
                         CategoryId = news.Id,
                         VisitCount = 5

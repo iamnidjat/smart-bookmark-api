@@ -44,6 +44,19 @@ namespace SmartBookmarkApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Tags",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tags", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -69,7 +82,6 @@ namespace SmartBookmarkApi.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Tags = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     VisitCount = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false)
@@ -87,6 +99,30 @@ namespace SmartBookmarkApi.Migrations
                         name: "FK_Bookmarks_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BookmarkTag",
+                columns: table => new
+                {
+                    BookmarksId = table.Column<int>(type: "int", nullable: false),
+                    TagsId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BookmarkTag", x => new { x.BookmarksId, x.TagsId });
+                    table.ForeignKey(
+                        name: "FK_BookmarkTag_Bookmarks_BookmarksId",
+                        column: x => x.BookmarksId,
+                        principalTable: "Bookmarks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_BookmarkTag_Tags_TagsId",
+                        column: x => x.TagsId,
+                        principalTable: "Tags",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -122,6 +158,11 @@ namespace SmartBookmarkApi.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_BookmarkTag_TagsId",
+                table: "BookmarkTag",
+                column: "TagsId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_BookmarkVisits_BookmarkId",
                 table: "BookmarkVisits",
                 column: "BookmarkId");
@@ -131,10 +172,16 @@ namespace SmartBookmarkApi.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "BookmarkTag");
+
+            migrationBuilder.DropTable(
                 name: "BookmarkVisits");
 
             migrationBuilder.DropTable(
                 name: "RefreshTokens");
+
+            migrationBuilder.DropTable(
+                name: "Tags");
 
             migrationBuilder.DropTable(
                 name: "Bookmarks");

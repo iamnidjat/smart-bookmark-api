@@ -54,6 +54,8 @@ namespace SmartBookmarkApi.Controllers.v1
                 return BadRequest(new { message = "Signup failed." });
             }
 
+            // Returns HTTP 201 Created to indicate that a new resource (user account) was successfully created.
+            // This follows REST conventions and clearly tells the client that signup resulted in a new entity.
             return Created("", authResponse);
         }
 

@@ -17,9 +17,9 @@ namespace SmartBookmarkApi.Repositories.Implementations
             _logger = logger;
         }
 
-        public async Task RegisterVisitAsync(int bookmarkId)
+        public async Task RegisterVisitAsync(int bookmarkId, CancellationToken cancellationToken)
         {
-            var bookmark = await _context.Bookmarks.FindAsync(bookmarkId);
+            var bookmark = await _context.Bookmarks.FindAsync(bookmarkId, cancellationToken);
 
             if (bookmark == null)
             {
@@ -33,10 +33,10 @@ namespace SmartBookmarkApi.Repositories.Implementations
                 BookmarkId = bookmarkId
             });
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<List<BookmarkVisitCountDto>> GetMostVisitedAsync(DateTime from, int take)
+        public async Task<List<BookmarkVisitCountDto>> GetMostVisitedAsync(DateTime from, int take, CancellationToken cancellationToken)
         {
             return await _context.BookmarkVisits
                 .Where(b => b.VisitedAt >= from)
@@ -49,7 +49,7 @@ namespace SmartBookmarkApi.Repositories.Implementations
                 })
                 .OrderByDescending(b => b.VisitCount)
                 .Take(take)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
     }
 }

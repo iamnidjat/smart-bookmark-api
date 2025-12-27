@@ -6,7 +6,7 @@ namespace SmartBookmarkApi.Repositories.Interfaces
 {
     public interface IBookmarkVisitRepository
     {
-        Task RegisterVisitAsync(int bookmarkId);
-        Task<List<BookmarkVisitCountDto>> GetMostVisitedAsync(DateTime from, int take);
+        Task RegisterVisitAsync(int bookmarkId, CancellationToken cancellationToken);
+        Task<List<BookmarkVisitCountDto>> GetMostVisitedAsync(DateTime from, int take, CancellationToken cancellationToken);
     }
 }

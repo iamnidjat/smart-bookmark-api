@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SmartBookmarkApi.Data;
@@ -7,7 +7,6 @@ using SmartBookmarkApi.Repositories.Interfaces;
 using SmartBookmarkApi.Services.Implementations;
 using SmartBookmarkApi.Services.Interfaces;
 using System.Text;
-using System.Text.Json.Serialization;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -96,6 +95,12 @@ app.UseCors(options =>
     .AllowAnyHeader();
 });
 
+// Reads and validates authentication credentials (JWT) from the request
+// If valid → sets HttpContext.User
+app.UseAuthentication();
+
+// Checks access rules like [Authorize], roles, and policies
+// Allows or blocks the request based on HttpContext.User
 app.UseAuthorization();
 
 app.MapControllers();

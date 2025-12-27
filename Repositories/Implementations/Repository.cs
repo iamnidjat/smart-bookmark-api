@@ -23,33 +23,33 @@ namespace SmartBookmarkApi.Repositories.Implementations
             _dbSet = _context.Set<T>();
         }
 
-        public virtual async Task<OperationResult> AddAsync(T entity)
+        public virtual async Task<OperationResultOfT<T>> AddAsync(T entity, CancellationToken cancellationToken)
         {
             try
             {
-                await _dbSet.AddAsync(entity);
-                await _context.SaveChangesAsync();
-                return new OperationResult { Success = true };
+                await _dbSet.AddAsync(entity, cancellationToken);
+                await _context.SaveChangesAsync(cancellationToken);
+                return new OperationResultOfT<T> { Success = true, Data = entity };
             }
-            catch (Exception ex) when (ex is DbUpdateConcurrencyException or DbUpdateException or OperationCanceledException)
+            catch (Exception ex) when (ex is DbUpdateConcurrencyException or DbUpdateException)
             {
                 _logger.LogError(ex, "Failed to add entity");
-                return new OperationResult { Success = false, ErrorMessage = ex.Message };
+                return new OperationResultOfT<T> { Success = false, ErrorMessage = ex.Message };
             }
             catch (Exception ex) // general fallback for unexpected exceptions
             {
                 _logger.LogError(ex, "Unexpected error occurred while adding {entity}.", typeof(T).Name);
-                return new OperationResult { Success = false, ErrorMessage = ex.Message };
+                return new OperationResultOfT<T> { Success = false, ErrorMessage = ex.Message };
             }
         }
 
-        public virtual async Task<List<T>> GetAllAsync()
+        public virtual async Task<List<T>> GetAllAsync(CancellationToken cancellationToken)
         {
             try
             {
-                return await _dbSet.AsNoTracking().ToListAsync();
+                return await _dbSet.AsNoTracking().ToListAsync(cancellationToken);
             }
-            catch (Exception ex) when (ex is ArgumentNullException or OperationCanceledException)
+            catch (Exception ex) when (ex is ArgumentNullException)
             {
                 _logger.LogError(ex, "Failed to get {entity}s", typeof(T).Name);
                 return Enumerable.Empty<T>().ToList();
@@ -61,13 +61,13 @@ namespace SmartBookmarkApi.Repositories.Implementations
             }
         }
 
-        public virtual async Task<T?> GetByIdAsync(int id)
+        public virtual async Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken)
         {
             try
             {
-                return await _dbSet.AsNoTracking().FirstOrDefaultAsync(e => e.Id == id);
+                return await _dbSet.AsNoTracking().FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
             }
-            catch (Exception ex) when (ex is ArgumentNullException or OperationCanceledException)
+            catch (Exception ex) when (ex is ArgumentNullException)
             {
                 _logger.LogError(ex, "Failed to get {entity} with ID {EntityId}", typeof(T).Name, id);
                 return null;
@@ -79,24 +79,24 @@ namespace SmartBookmarkApi.Repositories.Implementations
             }
         }
 
-        public virtual async Task<OperationResult> UpdateAsync(int id, T updatedEntity)
+        public virtual async Task<OperationResult> UpdateAsync(int id, T updatedEntity, CancellationToken cancellationToken)
         {
             try
             {
-                var existing = await _dbSet.FindAsync(id);
+                var existing = await _dbSet.FindAsync(id, cancellationToken);
 
                 if (existing != null)
                 {
                     _context.Entry(existing).CurrentValues.SetValues(updatedEntity);
 
-                    await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync(cancellationToken);
 
                     return new OperationResult { Success = true };
                 }
 
                 return new OperationResult { Success = false, ErrorMessage = $"{typeof(T).Name} with ID {id} not found" };
             }
-            catch (Exception ex) when (ex is DbUpdateConcurrencyException or DbUpdateException or OperationCanceledException)
+            catch (Exception ex) when (ex is DbUpdateConcurrencyException or DbUpdateException)
             {
                 _logger.LogError(ex, "Failed to update {entity} with ID {EntityId}", typeof(T).Name, id);
                 return new OperationResult { Success = false, ErrorMessage = ex.Message };
@@ -108,24 +108,24 @@ namespace SmartBookmarkApi.Repositories.Implementations
             }
         }
 
-        public virtual async Task<OperationResult> RemoveAsync(int id)
+        public virtual async Task<OperationResult> RemoveAsync(int id, CancellationToken cancellationToken)
         {
             try
             {
-                var existing = await _dbSet.FindAsync(id);
+                var existing = await _dbSet.FindAsync(id, cancellationToken);
 
                 if (existing != null)
                 {
                     _dbSet.Remove(existing);
 
-                    await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync(cancellationToken);
 
                     return new OperationResult { Success = true };
                 }
 
                 return new OperationResult { Success = false, ErrorMessage = $"{typeof(T).Name} with ID {id} not found" };
             }
-            catch (Exception ex) when (ex is DbUpdateConcurrencyException or DbUpdateException or OperationCanceledException)
+            catch (Exception ex) when (ex is DbUpdateConcurrencyException or DbUpdateException)
             {
                 _logger.LogError(ex, "Failed to remove {entity} with ID {EntityId}", typeof(T).Name, id);
                 return new OperationResult { Success = false, ErrorMessage = ex.Message };

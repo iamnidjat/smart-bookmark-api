@@ -92,7 +92,7 @@ namespace SmartBookmarkApi.Services.Implementations
                     Email = user.Email,
                 };
             }
-            catch (Exception ex) when (ex is ArgumentNullException or OperationCanceledException)
+            catch (Exception ex) when (ex is ArgumentNullException)
             {
                 _logger.LogError(ex, "Failed to log in");
                 return null;
@@ -167,7 +167,7 @@ namespace SmartBookmarkApi.Services.Implementations
                     Email = newUser.Email,
                 };
             }
-            catch (Exception ex) when (ex is ArgumentNullException or OperationCanceledException)
+            catch (Exception ex) when (ex is ArgumentNullException)
             {
                 _logger.LogError(ex, "Failed to sign up");
                 return null;
@@ -243,7 +243,7 @@ namespace SmartBookmarkApi.Services.Implementations
 
                 return newAccessToken;
             }
-            catch (Exception ex) when (ex is ArgumentNullException or OperationCanceledException)
+            catch (Exception ex) when (ex is ArgumentNullException)
             {
                 _logger.LogError(ex, "Failed to refresh the access token");
                 throw;
@@ -276,7 +276,7 @@ namespace SmartBookmarkApi.Services.Implementations
                 return new OperationResult { Success = true };
 
             }
-            catch (Exception ex) when (ex is DbUpdateConcurrencyException or DbUpdateException or OperationCanceledException or ArgumentNullException)
+            catch (Exception ex) when (ex is DbUpdateConcurrencyException or DbUpdateException or ArgumentNullException)
             {
                 _logger.LogError(ex, "Failed to logout user {UserId}", userId);
                 return new OperationResult { Success = false, ErrorMessage = ex.Message };
