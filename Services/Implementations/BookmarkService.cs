@@ -32,12 +32,12 @@ namespace SmartBookmarkApi.Services.Implementations
             _bookmarkVisitRepository = bookmarkVisitRepository;
         }
 
-        public async Task<List<Bookmark>> GetAllAsync(CancellationToken cancellationToken)
+        public async Task<OperationResultOfT<List<Bookmark>>> GetAllAsync(CancellationToken cancellationToken)
         {
             return await _bookmarkRepository.GetAllAsync(cancellationToken);
         }
 
-        public async Task<Bookmark?> GetByIdAsync(int id, CancellationToken cancellationToken)
+        public async Task<OperationResultOfT<Bookmark>> GetByIdAsync(int id, CancellationToken cancellationToken)
         {
             return await _bookmarkRepository.GetByIdAsync(id, cancellationToken);
         }
@@ -110,7 +110,7 @@ namespace SmartBookmarkApi.Services.Implementations
             {
                 var bookmark = await _bookmarkRepository.GetByIdAsync(bookmarkId, cancellationToken);
 
-                if (bookmark == null)
+                if (!bookmark.Success || bookmark.Data == null)
                 {
                     return new OperationResult
                     {
@@ -119,8 +119,8 @@ namespace SmartBookmarkApi.Services.Implementations
                     };
                 }
 
-                bookmark.CategoryId = newCategoryId;
-                await _context.SaveChangesAsync();
+                bookmark.Data.CategoryId = newCategoryId;
+                await _bookmarkRepository.UpdateAsync(bookmark.Data, cancellationToken);
 
                 return new OperationResult
                 {

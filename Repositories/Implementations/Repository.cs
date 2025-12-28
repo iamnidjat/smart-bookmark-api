@@ -43,39 +43,66 @@ namespace SmartBookmarkApi.Repositories.Implementations
             }
         }
 
-        public virtual async Task<List<T>> GetAllAsync(CancellationToken cancellationToken)
+        public virtual async Task<OperationResultOfT<List<T>>> GetAllAsync(CancellationToken cancellationToken)
         {
             try
             {
-                return await _dbSet.AsNoTracking().ToListAsync(cancellationToken);
+                var allEntities = await _dbSet.AsNoTracking().ToListAsync(cancellationToken);
+
+                return new OperationResultOfT<List<T>>
+                {
+                    Success = true,
+                    Data = allEntities
+                };
             }
             catch (Exception ex) when (ex is ArgumentNullException)
             {
                 _logger.LogError(ex, "Failed to get {entity}s", typeof(T).Name);
-                return Enumerable.Empty<T>().ToList();
+                return new OperationResultOfT<List<T>>
+                {
+                    Success = false,
+                    Data = Enumerable.Empty<T>().ToList()
+                };
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unexpected error occurred while getting {entity}s.", typeof(T).Name);
-                return Enumerable.Empty<T>().ToList();
+                return new OperationResultOfT<List<T>>
+                {
+                    Success = false,
+                    Data = Enumerable.Empty<T>().ToList()
+                };
             }
         }
 
-        public virtual async Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken)
+        public virtual async Task<OperationResultOfT<T>> GetByIdAsync(int id, CancellationToken cancellationToken)
         {
             try
             {
-                return await _dbSet.AsNoTracking().FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
+                var entity = await _dbSet.AsNoTracking().FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
+                return new OperationResultOfT<T>
+                {
+                    Success = false,
+                    Data = entity
+                };
             }
             catch (Exception ex) when (ex is ArgumentNullException)
             {
                 _logger.LogError(ex, "Failed to get {entity} with ID {EntityId}", typeof(T).Name, id);
-                return null;
+                return new OperationResultOfT<T>
+                {
+                    Success = false,
+                    Data = null
+                };
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unexpected error occurred while getting {entity} with ID {EntityId}", typeof(T).Name, id);
-                return null;
+                return new OperationResultOfT<T>
+                {
+                    Success = false,
+                    Data = null
+                };
             }
         }
 
@@ -104,6 +131,32 @@ namespace SmartBookmarkApi.Repositories.Implementations
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unexpected error occurred while adding {entity} with ID {EntityId}", typeof(T).Name, id);
+                return new OperationResult { Success = false, ErrorMessage = ex.Message };
+            }
+        }
+
+        /// <summary>
+        /// Updates an already-loaded entity instance.
+        /// This overload is used when the entity is already retrieved and modified
+        /// within the current unit of work to avoid an additional database fetch.
+        /// </summary>
+        public virtual async Task<OperationResult> UpdateAsync(T entity, CancellationToken cancellationToken)
+        {
+            try
+            {
+                _dbSet.Update(entity);
+                await _context.SaveChangesAsync(cancellationToken);
+
+                return new OperationResult { Success = true };
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                _logger.LogError(ex, "Concurrency error while updating {entity}", typeof(T).Name);
+                return new OperationResult { Success = false, ErrorMessage = ex.Message };
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.LogError(ex, "Database error while updating {entity}", typeof(T).Name);
                 return new OperationResult { Success = false, ErrorMessage = ex.Message };
             }
         }

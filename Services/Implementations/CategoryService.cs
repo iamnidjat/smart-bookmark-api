@@ -29,12 +29,12 @@ namespace SmartBookmarkApi.Services.Implementations
             return await _categoryRepository.AddAsync(category, cancellationToken);
         }
 
-        public async Task<List<Category>> GetAllAsync(CancellationToken cancellationToken)
+        public async Task<OperationResultOfT<List<Category>>> GetAllAsync(CancellationToken cancellationToken)
         {
             return await _categoryRepository.GetAllAsync(cancellationToken);
         }
 
-        public async Task<Category?> GetByIdAsync(int id, CancellationToken cancellationToken)
+        public async Task<OperationResultOfT<Category>> GetByIdAsync(int id, CancellationToken cancellationToken)
         {
             return await _categoryRepository.GetByIdAsync(id, cancellationToken);
         }

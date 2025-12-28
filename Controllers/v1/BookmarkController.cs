@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using SmartBookmarkApi.Models;
 using SmartBookmarkApi.Services.Interfaces;
@@ -21,19 +22,22 @@ namespace SmartBookmarkApi.Controllers.v1
         [HttpGet]
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
-            var bookmarks = await _bookmarkService.GetAllAsync(cancellationToken);
-            return Ok(bookmarks);
+            var result = await _bookmarkService.GetAllAsync(cancellationToken);
+            if (!result.Success)
+                return BadRequest(result.ErrorMessage);
+
+            return Ok(result.Data);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id, CancellationToken cancellationToken)
         {
-            var bookmark = await _bookmarkService.GetByIdAsync(id, cancellationToken);
+            var result = await _bookmarkService.GetByIdAsync(id, cancellationToken);
 
-            if (bookmark == null)
+            if (!result.Success || result.Data == null)
                 return NotFound();
 
-            return Ok(bookmark);
+            return Ok(result);
         }
 
         [HttpPost]
