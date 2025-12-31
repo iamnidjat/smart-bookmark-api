@@ -25,15 +25,15 @@ namespace SmartBookmarkApi.Models
         public int VisitCount { get; set; } // all-time
         
         // EF Core will create third table for many-to-many relationhsip automatically
-        public ICollection<Tag> Tags { get; set; } = [];    // new List<Tag>();
+        public ICollection<Tag> Tags { get; set; } = []; // new List<Tag>();
+        public ICollection<BookmarkVisit> Visits { get; set; } = [];
 
         [Required]
-        public int UserId { get; set; }
+        public int UserId { get; set; } // bookmark must belong to user
 
-        public User? User { get; set; }
+        public User User { get; set; } = null!;
 
-        [Required]
-        public int CategoryId { get; set; }
+        public int? CategoryId { get; set; } // bookmark can exist without category
 
         public Category? Category { get; set; }
     }

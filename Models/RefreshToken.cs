@@ -16,6 +16,8 @@ namespace SmartBookmarkApi.Models
         public DateTime ExpiresAt { get; set; }
         public bool IsUsed { get; set; } = false;
 
+        [Required]
         public int UserId { get; set; }
+        public User User { get; set; } = null!;
     }
 }

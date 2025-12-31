@@ -12,7 +12,9 @@ namespace SmartBookmarkApi.Models
         [Required]
         public DateTime VisitedAt { get; set; } = DateTime.UtcNow;
 
-        public Bookmark? Bookmark { get; set; } 
+        public Bookmark Bookmark { get; set; } = null!;
+
+        // null-forgiving: tells compiler EF will set this property, avoids nullable warnings
         // default! - suppresses warning, tells compiler “trust me, this will be set later"
     }
 }
