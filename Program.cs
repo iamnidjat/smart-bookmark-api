@@ -6,7 +6,9 @@ using SmartBookmarkApi.Repositories.Implementations;
 using SmartBookmarkApi.Repositories.Interfaces;
 using SmartBookmarkApi.Services.Implementations;
 using SmartBookmarkApi.Services.Interfaces;
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using System.Text.Json.Serialization;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,8 +16,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddCors();
-//builder.Services.AddControllers().AddJsonOptions(x =>
-//                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+// Configure JSON serialization to prevent errors when returning entities
+// with circular references (e.g., User -> Bookmarks -> User).
+builder.Services.AddControllers().AddJsonOptions(x =>
+                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -44,6 +48,10 @@ builder.Services.AddScoped<IBookmarkVisitRepository, BookmarkVisitRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+
+// Prevents automatic mapping of JWT claim names to Microsoft-specific claim types.
+// This ensures claim like "sub" is kept exactly as it appears in the token.
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
 builder.Services.AddAuthentication(options =>
 {

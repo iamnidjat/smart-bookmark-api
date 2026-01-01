@@ -36,10 +36,11 @@ namespace SmartBookmarkApi.Repositories.Implementations
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<List<BookmarkVisitCountDto>> GetMostVisitedAsync(DateTime from, int take, CancellationToken cancellationToken)
+        public async Task<List<BookmarkVisitCountDto>> GetMostVisitedAsync(int userId, DateTime from, int take, CancellationToken cancellationToken)
         {
             return await _context.BookmarkVisits
-                .Where(b => b.VisitedAt >= from)
+                .Where(b => b.Bookmark.UserId == userId &&
+                       b.VisitedAt >= from)
                 .GroupBy(b => b.Bookmark)
                 .Select(g => new BookmarkVisitCountDto
                 {

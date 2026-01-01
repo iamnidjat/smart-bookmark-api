@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using SmartBookmarkApi.Extensions;
 using SmartBookmarkApi.Models;
 using SmartBookmarkApi.Services.Interfaces;
 using SmartBookmarkApi.Utilities;
@@ -9,7 +10,7 @@ using SmartBookmarkApi.Utilities;
 namespace SmartBookmarkApi.Controllers.v1
 {
     [Route("api/v1/[controller]/")]
-    [ApiController] 
+    [ApiController]
     [Authorize] // Allows only authenticated users with a valid JWT token to access these endpoints
     public class BookmarkController : ControllerBase
     {
@@ -22,7 +23,10 @@ namespace SmartBookmarkApi.Controllers.v1
         [HttpGet]
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
-            var result = await _bookmarkService.GetAllAsync(cancellationToken);
+            var userId = User.GetUserId();
+
+            var result = await _bookmarkService.GetAllAsync(userId, cancellationToken);
+
             if (!result.Success)
                 return BadRequest(result.ErrorMessage);
 
@@ -79,7 +83,9 @@ namespace SmartBookmarkApi.Controllers.v1
             if (string.IsNullOrWhiteSpace(filterWord))
                 return BadRequest("Filter word is required.");
 
-            var result = await _bookmarkService.FilterBookmarks(filterWord, cancellationToken);
+            var userId = User.GetUserId();
+
+            var result = await _bookmarkService.FilterBookmarks(userId, filterWord, cancellationToken);
 
             if (!result.Success)
                 return BadRequest(result.ErrorMessage);

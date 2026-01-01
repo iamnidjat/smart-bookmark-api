@@ -266,7 +266,6 @@ namespace SmartBookmarkApi.Services.Implementations
             {
                 var tokens = await _context.RefreshTokens.Where(t => t.UserId == userId).ToListAsync();
 
-
                 if (!tokens.Any())
                     return new OperationResult { Success = true };
 

@@ -18,6 +18,8 @@ namespace SmartBookmarkApi.Models
 
         public ICollection<Bookmark> Bookmarks = [];
 
+        public ICollection<Category> Categories = [];
+
         public ICollection<RefreshToken> RefreshTokens = [];
     }
 }

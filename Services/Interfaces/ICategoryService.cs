@@ -5,11 +5,11 @@ namespace SmartBookmarkApi.Services.Interfaces
 {
     public interface ICategoryService
     {
-        Task<OperationResultOfT<List<Category>>> GetAllAsync(CancellationToken cancellationToken);
+        Task<OperationResultOfT<List<Category>>> GetAllAsync(int userId, CancellationToken cancellationToken);
         Task<OperationResultOfT<Category>> GetByIdAsync(int id, CancellationToken cancellationToken);
         Task<OperationResultOfT<Category>> AddAsync(Category category, CancellationToken cancellationToken);
         Task<OperationResult> UpdateAsync(int id, Category category, CancellationToken cancellationToken);
         Task<OperationResult> RemoveAsync(int id, CancellationToken cancellationToken);
-        Task<OperationResultOfT<List<Category>>> FilterCategories(string filterWord, CancellationToken cancellationToken);
+        Task<OperationResultOfT<List<Category>>> FilterCategories(int userId, string filterWord, CancellationToken cancellationToken);
     }
 }

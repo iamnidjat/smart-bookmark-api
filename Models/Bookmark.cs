@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SmartBookmarkApi.Models
 {
-    public class Bookmark : IEntity
+    public class Bookmark : IUserEntity
     {
         [Key]
         public int Id { get; set; }

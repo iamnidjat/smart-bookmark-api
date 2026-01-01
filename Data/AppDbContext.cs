@@ -19,6 +19,8 @@ namespace SmartBookmarkApi.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder); // for safety
+
             modelBuilder.Entity<BookmarkVisit>()
                 .HasOne(v => v.Bookmark)
                 .WithMany(b => b.Visits)
@@ -36,6 +38,13 @@ namespace SmartBookmarkApi.Data
                 .WithMany(b => b.Bookmarks)
                 .HasForeignKey(v => v.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Category>()
+                .HasOne(v => v.User)
+                .WithMany(b => b.Categories)
+                .HasForeignKey(v => v.UserId)
+                .OnDelete(DeleteBehavior.Restrict); 
+            // Categories → User: **cannot cascade** due to SQL Server multiple cascade path restriction
 
             modelBuilder.Entity<Bookmark>()
                .HasOne(v => v.Category)

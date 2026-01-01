@@ -23,11 +23,11 @@ namespace SmartBookmarkApi.Services.Implementations
             _bookmarkVisitRepository = bookmarkVisitRepository;
         }
 
-        public async Task<OperationResultOfT<List<BookmarkVisitCountDto>>> GetMostVisitedAsync(DateTime from, int take, CancellationToken cancellationToken)
+        public async Task<OperationResultOfT<List<BookmarkVisitCountDto>>> GetMostVisitedAsync(int userId, DateTime from, int take, CancellationToken cancellationToken)
         {
             try
             {
-                var mostVisited = await _bookmarkVisitRepository.GetMostVisitedAsync(from, take, cancellationToken);
+                var mostVisited = await _bookmarkVisitRepository.GetMostVisitedAsync(userId, from, take, cancellationToken);
 
                 return new OperationResultOfT<List<BookmarkVisitCountDto>>
                 {

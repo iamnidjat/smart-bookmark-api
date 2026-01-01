@@ -60,11 +60,12 @@ namespace SmartBookmarkApi.Repositories.Implementations
             }
         }
 
-        public async Task<List<Bookmark>> FilterAsync(string filterWord, CancellationToken cancellationToken)
+        public async Task<List<Bookmark>> FilterAsync(int userId, string filterWord, CancellationToken cancellationToken)
         {
             return await _context.Bookmarks
                 .AsNoTracking()
                 .Where(b =>
+                    b.UserId == userId &&
                     b.Title.Contains(filterWord) ||
                     b.Url.Contains(filterWord) ||
                     (b.Content ?? "").Contains(filterWord) ||

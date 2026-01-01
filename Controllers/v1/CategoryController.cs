@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using SmartBookmarkApi.Extensions;
 using SmartBookmarkApi.Models;
 using SmartBookmarkApi.Services.Implementations;
 using SmartBookmarkApi.Services.Interfaces;
@@ -22,7 +23,9 @@ namespace SmartBookmarkApi.Controllers.v1
         [HttpGet]
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
-            var result = await _categoryService.GetAllAsync(cancellationToken);
+            var userId = User.GetUserId();
+
+            var result = await _categoryService.GetAllAsync(userId, cancellationToken);
 
             if (!result.Success)
                 return BadRequest(result.ErrorMessage);
@@ -80,7 +83,9 @@ namespace SmartBookmarkApi.Controllers.v1
             if (string.IsNullOrWhiteSpace(filterWord))
                 return BadRequest("Filter word is required.");
 
-            var result = await _categoryService.FilterCategories(filterWord, cancellationToken);
+            var userId = User.GetUserId();
+
+            var result = await _categoryService.FilterCategories(userId, filterWord, cancellationToken);
 
             if (!result.Success)
                 return BadRequest(result.ErrorMessage);

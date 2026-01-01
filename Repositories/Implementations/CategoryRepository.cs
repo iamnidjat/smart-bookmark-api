@@ -12,11 +12,11 @@ namespace SmartBookmarkApi.Repositories.Implementations
         {
         }
 
-        public async Task<List<Category>> FilterAsync(string filterWord, CancellationToken cancellationToken)
+        public async Task<List<Category>> FilterAsync(int userId, string filterWord, CancellationToken cancellationToken)
         {
             return await _context.Categories
                 .AsNoTracking()
-                .Where(b => b.Name.Contains(filterWord) || (b.Description ?? "").Contains(filterWord))
+                .Where(b => b.UserId == userId && b.Name.Contains(filterWord) || (b.Description ?? "").Contains(filterWord))
                 .ToListAsync(cancellationToken);
         }
     }

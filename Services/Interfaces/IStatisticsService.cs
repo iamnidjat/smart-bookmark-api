@@ -5,6 +5,6 @@ namespace SmartBookmarkApi.Services.Interfaces
 {
     public interface IStatisticsService
     {
-        Task<OperationResultOfT<List<BookmarkVisitCountDto>>> GetMostVisitedAsync(DateTime from, int take, CancellationToken cancellationToken);
+        Task<OperationResultOfT<List<BookmarkVisitCountDto>>> GetMostVisitedAsync(int userId, DateTime from, int take, CancellationToken cancellationToken);
     }
 }

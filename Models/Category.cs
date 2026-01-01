@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SmartBookmarkApi.Models
 {
-    public class Category : IEntity
+    public class Category : IUserEntity
     {
         [Key]
         public int Id { get; set; }
@@ -17,5 +17,9 @@ namespace SmartBookmarkApi.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public ICollection<Bookmark> Bookmarks = [];
+
+        [Required]
+        public int UserId { get; set; } // category must belong to user
+        public User User { get; set; } = null!;
     }
 }

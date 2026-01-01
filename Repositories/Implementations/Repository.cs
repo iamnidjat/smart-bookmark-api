@@ -10,7 +10,7 @@ namespace SmartBookmarkApi.Repositories.Implementations
     // It isolates all Entity Framework Core database logic, so the service layer
     // doesn’t need to know how the data is actually stored or retrieved.
     // This makes the application easier to maintain, test, and extend.
-    public class Repository<T> : IRepository<T> where T : class, IEntity
+    public class Repository<T> : IRepository<T> where T : class, IUserEntity
     {
         protected readonly AppDbContext _context;
         protected readonly ILogger _logger;
@@ -43,11 +43,11 @@ namespace SmartBookmarkApi.Repositories.Implementations
             }
         }
 
-        public virtual async Task<OperationResultOfT<List<T>>> GetAllAsync(CancellationToken cancellationToken)
+        public virtual async Task<OperationResultOfT<List<T>>> GetAllAsync(int userId, CancellationToken cancellationToken)
         {
             try
             {
-                var allEntities = await _dbSet.AsNoTracking().ToListAsync(cancellationToken);
+                var allEntities = await _dbSet.AsNoTracking().Where(e => e.UserId == userId).ToListAsync(cancellationToken);
 
                 return new OperationResultOfT<List<T>>
                 {

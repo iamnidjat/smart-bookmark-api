@@ -4,6 +4,6 @@ namespace SmartBookmarkApi.Repositories.Interfaces
 {
     public interface IBookmarkRepository : IRepository<Bookmark>
     {
-        Task<List<Bookmark>> FilterAsync(string filterWord, CancellationToken cancellationToken);
+        Task<List<Bookmark>> FilterAsync(int userId, string filterWord, CancellationToken cancellationToken);
     }
 }

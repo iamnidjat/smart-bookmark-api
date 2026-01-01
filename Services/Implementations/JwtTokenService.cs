@@ -22,6 +22,7 @@ namespace SmartBookmarkApi.Services.Implementations
 
             var claims = new[]
             {
+                new Claim(ClaimTypes.NameIdentifier, userId), // for ASP.NET Core compatibility
                 new Claim(JwtRegisteredClaimNames.Sub, userId),
                 new Claim(JwtRegisteredClaimNames.UniqueName, username),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())

@@ -32,9 +32,9 @@ namespace SmartBookmarkApi.Services.Implementations
             _bookmarkVisitRepository = bookmarkVisitRepository;
         }
 
-        public async Task<OperationResultOfT<List<Bookmark>>> GetAllAsync(CancellationToken cancellationToken)
+        public async Task<OperationResultOfT<List<Bookmark>>> GetAllAsync(int userId, CancellationToken cancellationToken)
         {
-            return await _bookmarkRepository.GetAllAsync(cancellationToken);
+            return await _bookmarkRepository.GetAllAsync(userId, cancellationToken);
         }
 
         public async Task<OperationResultOfT<Bookmark>> GetByIdAsync(int id, CancellationToken cancellationToken)
@@ -57,11 +57,11 @@ namespace SmartBookmarkApi.Services.Implementations
             return await _bookmarkRepository.RemoveAsync(id, cancellationToken);
         }
 
-        public async Task<OperationResultOfT<List<Bookmark>>> FilterBookmarks(string filterWord, CancellationToken cancellationToken)
+        public async Task<OperationResultOfT<List<Bookmark>>> FilterBookmarks(int userId, string filterWord, CancellationToken cancellationToken)
         {
             try
             {
-                var filteredBookmarks = await _bookmarkRepository.FilterAsync(filterWord, cancellationToken);
+                var filteredBookmarks = await _bookmarkRepository.FilterAsync(userId, filterWord, cancellationToken);
 
                 return new OperationResultOfT<List<Bookmark>>
                 {

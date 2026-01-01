@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SmartBookmarkApi.Models
 {
-    public class RefreshToken : IEntity
+    public class RefreshToken : IUserEntity
     {
         [Key]
         public int Id { get; set; }

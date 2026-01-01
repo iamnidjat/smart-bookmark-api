@@ -29,9 +29,9 @@ namespace SmartBookmarkApi.Services.Implementations
             return await _categoryRepository.AddAsync(category, cancellationToken);
         }
 
-        public async Task<OperationResultOfT<List<Category>>> GetAllAsync(CancellationToken cancellationToken)
+        public async Task<OperationResultOfT<List<Category>>> GetAllAsync(int userId, CancellationToken cancellationToken)
         {
-            return await _categoryRepository.GetAllAsync(cancellationToken);
+            return await _categoryRepository.GetAllAsync(userId, cancellationToken);
         }
 
         public async Task<OperationResultOfT<Category>> GetByIdAsync(int id, CancellationToken cancellationToken)
@@ -49,11 +49,11 @@ namespace SmartBookmarkApi.Services.Implementations
             return await _categoryRepository.UpdateAsync(id, category, cancellationToken);
         }
 
-        public async Task<OperationResultOfT<List<Category>>> FilterCategories(string filterWord, CancellationToken cancellationToken)
+        public async Task<OperationResultOfT<List<Category>>> FilterCategories(int userId, string filterWord, CancellationToken cancellationToken)
         {
             try
             {
-                var filteredCategories = await _categoryRepository.FilterAsync(filterWord, cancellationToken);
+                var filteredCategories = await _categoryRepository.FilterAsync(userId, filterWord, cancellationToken);
 
                 return new OperationResultOfT<List<Category>>
                 {
