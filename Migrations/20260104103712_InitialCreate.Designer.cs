@@ -12,7 +12,7 @@ using SmartBookmarkApi.Data;
 namespace SmartBookmarkApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251227095858_InitialCreate")]
+    [Migration("20260104103712_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -48,7 +48,7 @@ namespace SmartBookmarkApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CategoryId")
+                    b.Property<int?>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<string>("Content")
@@ -122,7 +122,12 @@ namespace SmartBookmarkApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Categories");
                 });
@@ -152,6 +157,8 @@ namespace SmartBookmarkApi.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("RefreshTokens");
                 });
@@ -216,13 +223,12 @@ namespace SmartBookmarkApi.Migrations
             modelBuilder.Entity("SmartBookmarkApi.Models.Bookmark", b =>
                 {
                     b.HasOne("SmartBookmarkApi.Models.Category", "Category")
-                        .WithMany()
+                        .WithMany("Bookmarks")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("SmartBookmarkApi.Models.User", "User")
-                        .WithMany()
+                        .WithMany("Bookmarks")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -235,12 +241,53 @@ namespace SmartBookmarkApi.Migrations
             modelBuilder.Entity("SmartBookmarkApi.Models.BookmarkVisit", b =>
                 {
                     b.HasOne("SmartBookmarkApi.Models.Bookmark", "Bookmark")
-                        .WithMany()
+                        .WithMany("Visits")
                         .HasForeignKey("BookmarkId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Bookmark");
+                });
+
+            modelBuilder.Entity("SmartBookmarkApi.Models.Category", b =>
+                {
+                    b.HasOne("SmartBookmarkApi.Models.User", "User")
+                        .WithMany("Categories")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("SmartBookmarkApi.Models.RefreshToken", b =>
+                {
+                    b.HasOne("SmartBookmarkApi.Models.User", "User")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("SmartBookmarkApi.Models.Bookmark", b =>
+                {
+                    b.Navigation("Visits");
+                });
+
+            modelBuilder.Entity("SmartBookmarkApi.Models.Category", b =>
+                {
+                    b.Navigation("Bookmarks");
+                });
+
+            modelBuilder.Entity("SmartBookmarkApi.Models.User", b =>
+                {
+                    b.Navigation("Bookmarks");
+
+                    b.Navigation("Categories");
+
+                    b.Navigation("RefreshTokens");
                 });
 #pragma warning restore 612, 618
         }

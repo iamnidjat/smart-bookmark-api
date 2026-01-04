@@ -23,10 +23,13 @@ namespace SmartBookmarkApi.Data
             // Seed Categories
             if (!await context.Categories.AnyAsync())
             {
+                var alice = await context.Users.FirstAsync(u => u.Username == "alice");
+                var bob = await context.Users.FirstAsync(u => u.Username == "bob");
+
                 var categories = new List<Category>
                 {
-                    new Category { Name = "Tech", Description = "Technology related bookmarks" },
-                    new Category { Name = "News", Description = "News and media" }
+                    new Category { Name = "Tech", Description = "Technology related bookmarks", UserId = alice.Id },
+                    new Category { Name = "News", Description = "News and media", UserId = bob.Id }
                 };
 
                 context.Categories.AddRange(categories);
