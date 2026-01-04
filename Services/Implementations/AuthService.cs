@@ -53,7 +53,7 @@ namespace SmartBookmarkApi.Services.Implementations
             {
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
 
-                if (user == null || !BC.EnhancedVerify(password, user.Password, HashType.SHA512))
+                if (user == null || !BC.Verify(password, user.Password))
                 {
                     return null;
                 }
@@ -125,7 +125,7 @@ namespace SmartBookmarkApi.Services.Implementations
                 var newUser = new User
                 {
                     Username = username,
-                    Password = BC.EnhancedHashPassword(password, 13, HashType.SHA512),
+                    Password = BC.HashPassword(password, 13),
                     Email = email
                 };
 
