@@ -15,6 +15,8 @@ namespace SmartBookmarkApi.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime ExpiresAt { get; set; }
         public bool IsUsed { get; set; } = false;
+        public bool IsRevoked { get; set; } = false;
+        public DateTime RevokedAt { get; set; }
 
         [Required]
         public int UserId { get; set; }

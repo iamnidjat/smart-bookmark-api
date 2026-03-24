@@ -264,16 +264,24 @@ namespace SmartBookmarkApi.Services.Implementations
         {
             try
             {
-                var tokens = await _context.RefreshTokens.Where(t => t.UserId == userId).ToListAsync();
+                var tokens = await _context.RefreshTokens.Where(t => t.UserId == userId)
+                    .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(t => t.IsRevoked, true)
+                    .SetProperty(t => t.RevokedAt, DateTime.UtcNow)
+                );
 
-                if (!tokens.Any())
-                    return new OperationResult { Success = true };
+                //if (!tokens.Any())
+                //    return new OperationResult { Success = true };
 
-                _context.RefreshTokens.RemoveRange(tokens);
-                await _context.SaveChangesAsync();
+                //foreach (var token in tokens)
+                //{
+                //    token.IsRevoked = true;
+                //    token.RevokedAt = DateTime.UtcNow;
+                //}
+
+                //await _context.SaveChangesAsync();
 
                 return new OperationResult { Success = true };
-
             }
             catch (Exception ex) when (ex is DbUpdateConcurrencyException or DbUpdateException or ArgumentNullException)
             {
